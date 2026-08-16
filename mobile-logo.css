@@ -1,0 +1,114 @@
+/* Keep the logo outline light on small screens across secondary pages. */
+@media (max-width: 700px) {
+  :root {
+    --logo-size: 108px;
+    --logo-inset-y: 4px;
+    --logo-anchor-left: calc(var(--gutter) - (var(--logo-size) * 0.19394)) !important;
+    --logo-travel: calc(100vw - (var(--logo-anchor-left) * 2) - var(--logo-size) + 40px) !important;
+  }
+
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  .logo-outline *,
+  .project-logo-outline * {
+    stroke-width: 1px !important;
+  }
+
+  .project-logo-shell {
+    width: 108px !important;
+    height: 108px !important;
+    top: 4px !important;
+    right: calc(var(--gutter) - (108px * 0.19394)) !important;
+  }
+
+  .project-page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    padding-bottom: 16px !important;
+  }
+
+  .project-note {
+    margin-top: 24px !important;
+  }
+
+  .project-description-copy {
+    width: 100% !important;
+    text-align: left !important;
+  }
+
+  .project-description {
+    padding-top: calc(4px + (108px * 0.21778)) !important;
+  }
+
+  .project-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+  }
+
+  .project-long-image-scroll {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0;
+    margin-left: 0 !important;
+    overflow: visible !important;
+  }
+
+  .project-long-image-scroll figure {
+    position: static !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+  }
+
+  .project-long-image-scroll img {
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    max-width: 100% !important;
+    transform: none !important;
+  }
+
+  .project-calendar .project-long-image-scroll {
+    width: 100vw !important;
+    height: 56.25vw !important;
+    margin-left: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  .project-calendar .project-long-image-scroll figure {
+    position: static !important;
+    width: 1334.01vw !important;
+    min-width: 1334.01vw !important;
+    height: 56.25vw !important;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .project-calendar .project-long-image-scroll img {
+    position: static !important;
+    width: 1334.01vw !important;
+    height: 56.25vw !important;
+    max-width: none !important;
+    transform: none !important;
+  }
+
+  .project-calendar .project-gallery > figure:last-child {
+    position: relative;
+    height: auto;
+  }
+
+  .project-calendar .project-gallery > figure:last-child img {
+    position: static;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    transform: none;
+  }
+}

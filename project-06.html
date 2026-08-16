@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="mobile-logo.css" />
+    <title>CHOCTOLAE</title>
+    <style>
+      :root {
+        --page-bg: #ffffff;
+        --page-fg: #111111;
+        --page-muted: rgba(17, 17, 17, 0.52);
+        --content-width: 1440px;
+        --gutter: clamp(20px, 4vw, 64px);
+        --grid-gap: clamp(18px, 2.8vw, 34px);
+        --logo-size: 195px;
+        --logo-inset-y: 8px;
+        --logo-anchor-left: calc(var(--gutter) - (var(--logo-size) * 0.19394));
+        --logo-visual-top: calc(var(--logo-size) * 0.21778);
+        --logo-travel: calc(100vw - (var(--logo-anchor-left) * 2) - var(--logo-size));
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        background: #fff;
+        color: #111;
+        font-family: Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
+      }
+
+      body { overflow-x: hidden; }
+
+      .project-page {
+        width: min(100%, calc(var(--content-width) + var(--gutter) * 2));
+        margin: 0 auto;
+        padding: 0 var(--gutter) 80px;
+      }
+
+      .project-logo-shell {
+        position: fixed;
+        left: auto;
+        right: var(--logo-anchor-left);
+        top: var(--logo-inset-y);
+        display: block;
+        width: var(--logo-size);
+        height: var(--logo-size);
+        z-index: 30;
+        cursor: grab;
+        mix-blend-mode: difference;
+        animation: project-logo-enter 1200ms cubic-bezier(0.65, 0, 0.35, 1) both;
+        will-change: transform;
+      }
+
+      @keyframes project-logo-enter {
+        from { transform: translateX(calc(0px - var(--logo-travel))); }
+        to { transform: translateX(0); }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .project-logo-shell { animation: none; }
+      }
+
+      .project-logo-outline {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        opacity: 1;
+        transition: opacity 160ms ease;
+        filter: brightness(0) invert(1);
+        -webkit-filter: brightness(0) invert(1);
+      }
+
+      .project-logo-solid {
+        position: absolute;
+        left: 19.394%;
+        top: 21.778%;
+        display: block;
+        width: 61.212%;
+        height: 56.443%;
+        opacity: 0;
+        transition: opacity 160ms ease;
+        filter: brightness(0) invert(1);
+        -webkit-filter: brightness(0) invert(1);
+      }
+
+      .project-logo-shell:hover .project-logo-outline { opacity: 0; }
+      .project-logo-shell:hover .project-logo-solid { opacity: 1; }
+
+      .project-logo-shell.is-active { cursor: grabbing; }
+      .project-logo-shell.is-active .project-logo-outline { opacity: 0; }
+      .project-logo-shell.is-active .project-logo-solid { opacity: 1; }
+
+      .project-description {
+        padding-top: calc(var(--logo-visual-top) + 8px);
+        padding-bottom: 64px;
+        max-width: 720px;
+        animation: description-enter 1200ms cubic-bezier(0.65, 0, 0.35, 1) 140ms both;
+      }
+
+      @keyframes description-enter {
+        from { opacity: 0; transform: translateX(-80px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .project-description-title,
+      .project-description-year { margin: 0; font-weight: 400; line-height: 1.2; }
+      .project-description-title { font-size: 22px; }
+      .project-description-year { margin-top: 28px; font-size: 18px; }
+
+      .project-description-copy { width: min(100%, 432px); margin-top: 56px; text-align: left; }
+      .project-description-copy p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.5;
+      }
+      .project-description-copy p + p { margin-top: 42px; }
+
+      .project-gallery {
+        display: grid;
+        gap: 40px;
+      }
+
+      .project-hero {
+        width: 100vw;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        margin-left: calc(50% - 50vw);
+        background: #fff;
+      }
+
+      .project-hero img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .project-row {
+        display: grid;
+        gap: 40px;
+      }
+
+      .project-row.two-up {
+        grid-template-columns: 1fr;
+      }
+
+      .project-row.three-up {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      figure { margin: 0; }
+      figure img { display: block; width: 100%; height: auto; }
+
+      .project-gallery figure {
+        opacity: 0;
+        transform: translateY(48px);
+        transition: opacity 700ms ease, transform 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      .project-gallery figure.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .project-gallery figure.is-no-reveal {
+        transition: none;
+      }
+
+      .project-gallery figure.is-replaying {
+        animation: project-figure-rise 900ms cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      @keyframes project-figure-rise {
+        from { transform: translateY(48px); }
+        to { transform: translateY(0); }
+      }
+
+      .project-note {
+        margin: 80px 0 0;
+        font-size: 12px;
+        font-weight: 700;
+        color: rgba(17, 17, 17, 0.52);
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .project-logo-shell, .project-description { animation: none; }
+        .project-gallery figure, .project-gallery figure.is-visible {
+          opacity: 1;
+          transform: none;
+          transition: none;
+        }
+      }
+
+      @media (max-width: 980px) {
+        .project-row.two-up,
+        .project-row.three-up {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="project-page">
+      <span class="project-logo-shell" aria-hidden="true">
+        <svg
+          class="project-logo-outline"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1080 1080"
+          focusable="false"
+        >
+          <g transform="translate(209.455 235.205)">
+            <polyline
+              fill="none"
+              stroke="#000000"
+              stroke-miterlimit="10"
+              stroke-width="4.25"
+              vector-effect="non-scaling-stroke"
+              points="658.92 296.12 658.92 607.46 2.13 607.46 2.13 330.85 28.71 330.68 28.56 2.13 633.9 2.13 633.9 296.12"
+            />
+            <line
+              fill="none"
+              stroke="#000000"
+              stroke-miterlimit="10"
+              stroke-width="4.25"
+              vector-effect="non-scaling-stroke"
+              x1="633.9"
+              y1="2.13"
+              x2="633.9"
+              y2="296.12"
+            />
+            <path
+              fill="none"
+              stroke="#000000"
+              stroke-miterlimit="10"
+              stroke-width="4.25"
+              vector-effect="non-scaling-stroke"
+              d="M657.36,296.11c0,201.39-155.78,303.96-326.1,303.57-162.86-.37-294.88-132.02-294.88-294.88S168.4,9.91,331.26,9.91s290.16,127.36,294.76,286.2"
+            />
+          </g>
+        </svg>
+        <img class="project-logo-solid" src="logo/blacklogo.svg" alt="" />
+      </span>
+
+      <section class="project-description" aria-label="作品简介">
+        <h1 class="project-description-title">CHOCTOLAE</h1>
+        <p class="project-description-year">2025.9</p>
+        <div class="project-description-copy">
+          <p>CHOCTOLAE 是一项以板状巧克力为主题的包装设计。设计希望让“打开包装”这件事本身变得更有趣，因此将外包装处理成类似水果表皮的形式，为板状巧克力加入了一点不同于常规包装的视觉联想。</p>
+          <p>通过这样简单的变化，让包装不只是保护商品，也成为食用巧克力之前的一部分体验。</p>
+        </div>
+      </section>
+
+      <section class="project-gallery" aria-label="作品图像">
+        <figure class="project-hero">
+          <img src="image/CHOCTEOLA/未标题-6-01.jpg" alt="CHOCTOLAE 项目主视觉图像" />
+        </figure>
+        <div class="project-row two-up">
+          <figure><img src="image/CHOCTEOLA/未标题-6-02.jpg" alt="CHOCTOLAE 项目图像 02" /></figure>
+        </div>
+        <div class="project-row two-up">
+          <figure><img src="image/CHOCTEOLA/未标题-6-03.jpg" alt="CHOCTOLAE 项目图像 03" /></figure>
+          <figure><img src="image/CHOCTEOLA/未标题-6-04.jpg" alt="CHOCTOLAE 项目图像 04" /></figure>
+        </div>
+      </section>
+
+      <p class="project-note">© 2026 MADO DESIGN. ALL RIGHTS RESERVED.</p>
+    </main>
+    <script>
+      const logoShell = document.querySelector(".project-logo-shell");
+
+      if (logoShell) {
+        let dragging = false;
+        let dragOffsetX = 0;
+        let dragOffsetY = 0;
+
+        logoShell.addEventListener("pointerdown", (event) => {
+          const rect = logoShell.getBoundingClientRect();
+          dragging = true;
+          dragOffsetX = event.clientX - rect.left;
+          dragOffsetY = event.clientY - rect.top;
+          logoShell.classList.add("is-active");
+          logoShell.setPointerCapture(event.pointerId);
+          event.preventDefault();
+        });
+
+        logoShell.addEventListener("pointermove", (event) => {
+          if (!dragging) return;
+
+          const nextLeft = Math.min(Math.max(event.clientX - dragOffsetX, 0), window.innerWidth - logoShell.offsetWidth);
+          const nextTop = Math.min(Math.max(event.clientY - dragOffsetY, 0), window.innerHeight - logoShell.offsetHeight);
+
+          logoShell.style.left = `${nextLeft}px`;
+          logoShell.style.top = `${nextTop}px`;
+          logoShell.style.right = "auto";
+          logoShell.style.transform = "translate(0, 0)";
+        });
+
+        const stopDragging = (event) => {
+          if (!dragging) return;
+          dragging = false;
+          logoShell.classList.remove("is-active");
+          if (event?.pointerId !== undefined && logoShell.hasPointerCapture(event.pointerId)) {
+            logoShell.releasePointerCapture(event.pointerId);
+          }
+        };
+
+        logoShell.addEventListener("pointerup", stopDragging);
+        logoShell.addEventListener("pointercancel", stopDragging);
+      }
+
+      const projectFigures = document.querySelectorAll(".project-gallery figure");
+
+      if (projectFigures.length) {
+        let galleryUnlocked = false;
+        let lastScrollY = window.scrollY;
+        const pendingEntries = new Set();
+
+        const revealFigures = (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+
+            if (!galleryUnlocked) {
+              pendingEntries.add(entry);
+              return;
+            }
+
+            const rootBounds = entry.rootBounds;
+            const enteredFromBottom = rootBounds && entry.boundingClientRect.top >= rootBounds.bottom;
+            const wasVisible = entry.target.classList.contains("is-visible");
+
+            entry.target.classList.add("is-visible");
+
+            if (enteredFromBottom && wasVisible) {
+              entry.target.classList.remove("is-replaying");
+              void entry.target.offsetWidth;
+              entry.target.classList.add("is-replaying");
+            }
+
+            if (!enteredFromBottom) {
+              entry.target.classList.add("is-no-reveal");
+              requestAnimationFrame(() => entry.target.classList.remove("is-no-reveal"));
+            }
+          });
+        };
+
+        window.addEventListener("scroll", () => {
+          const currentScrollY = window.scrollY;
+          const scrolledDown = currentScrollY > lastScrollY;
+          lastScrollY = currentScrollY;
+
+          if (!scrolledDown || galleryUnlocked) return;
+
+          galleryUnlocked = true;
+          pendingEntries.forEach((entry) => {
+            if (entry.isIntersecting) revealFigures([entry]);
+          });
+          pendingEntries.clear();
+        }, { passive: true });
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+          projectFigures.forEach((figure) => figure.classList.add("is-visible"));
+        } else {
+          const figureObserver = new IntersectionObserver(revealFigures, {
+            rootMargin: "0px 0px -20% 0px",
+            threshold: 0.05,
+          });
+
+          projectFigures.forEach((figure) => figureObserver.observe(figure));
+        }
+      }
+      (() => {
+        const match = window.location.pathname.match(/project-(\d+)\.html/);
+        if (!match || !logoShell) return;
+        const current = Number(match[1]);
+        let moved = false;
+        logoShell.addEventListener('pointerdown', () => { moved = false; });
+        logoShell.addEventListener('pointermove', () => { moved = true; });
+        logoShell.addEventListener('pointerup', (event) => {
+          if (moved) { moved = false; return; }
+          const rect = logoShell.getBoundingClientRect();
+          const isRightHalf = event.clientX >= rect.left + rect.width / 2;
+          const target = isRightHalf ? current + 1 : current - 1;
+          if (target < 1 || target > 13) return;
+          window.location.href = 'project-' + String(target).padStart(2, '0') + '.html';
+        });
+      })();
+    </script>
+  </body>
+</html>
