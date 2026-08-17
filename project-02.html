@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="mobile-logo.css" />
+    <script src="project-navigation.js" defer></script>
     <title>KEN</title>
     <style>
       :root {
@@ -487,6 +488,8 @@
 
           logoShell.style.left = `${nextLeft}px`;
           logoShell.style.top = `${nextTop}px`;
+          logoShell.style.right = "auto";
+          logoShell.style.transform = "translate(0, 0)";
         });
 
         logoShell.addEventListener("pointerup", (event) => {

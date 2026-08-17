@@ -6,6 +6,13 @@ const windowWorld = document.querySelector(".window-world");
 const windowTransition = document.querySelector(".window-transition");
 const sliceBoard = document.querySelector(".slice-board");
 const navItems = document.querySelectorAll(".nav-item");
+const sliceNavInvertLayer = mainNav && logoAnchor ? document.createElement("div") : null;
+
+if (sliceNavInvertLayer) {
+  sliceNavInvertLayer.className = "slice-nav-invert-layer";
+  sliceNavInvertLayer.setAttribute("aria-hidden", "true");
+  document.body.append(sliceNavInvertLayer);
+}
 
 function getUsableViewportHeight() {
   if (window.matchMedia("(max-width: 640px)").matches && window.visualViewport) {
@@ -110,23 +117,53 @@ function hideNavReveal() {
   mainNav.style.setProperty("--nav-reveal-right", "50%");
   mainNav.style.setProperty("--nav-reveal-bottom", "50%");
   mainNav.style.setProperty("--nav-reveal-left", "50%");
-  navItems.forEach((item) => {
-    item.classList.remove("nav-cmyk-c", "nav-cmyk-m", "nav-cmyk-y", "nav-cmyk-k");
-  });
   sliceNavRevealHits.clear();
+  hideSliceNavInvertLayer();
 }
 
-function applySliceNavColor(item) {
-  const colors = ["nav-cmyk-c", "nav-cmyk-m", "nav-cmyk-y", "nav-cmyk-k"];
-  const current = colors.findIndex((className) => item.classList.contains(className));
-  let next = Math.floor(Math.random() * colors.length);
+function hideSliceNavInvertLayer() {
+  if (!sliceNavInvertLayer) return;
 
-  if (colors.length > 1 && next === current) {
-    next = (next + 1) % colors.length;
-  }
+  sliceNavInvertLayer.classList.remove("is-visible");
+  sliceNavInvertLayer.replaceChildren();
+}
 
-  item.classList.remove(...colors);
-  item.classList.add(colors[next]);
+function updateSliceNavInvertLayer() {
+  if (!sliceNavInvertLayer) return;
+
+  // Keep the inversion layer aligned with the visible logo pixels, not the
+  // larger draggable anchor around it.
+  const logoRect = getLogoHitRect();
+  sliceNavInvertLayer.replaceChildren();
+  sliceNavInvertLayer.style.left = `${logoRect.left}px`;
+  sliceNavInvertLayer.style.top = `${logoRect.top}px`;
+  sliceNavInvertLayer.style.width = `${logoRect.width}px`;
+  sliceNavInvertLayer.style.height = `${logoRect.height}px`;
+
+  navItems.forEach((item) => {
+    const itemRect = item.getBoundingClientRect();
+    const overlaps =
+      logoRect.right > itemRect.left &&
+      logoRect.left < itemRect.right &&
+      logoRect.bottom > itemRect.top &&
+      logoRect.top < itemRect.bottom;
+
+    if (!overlaps) return;
+
+    const label = document.createElement("span");
+    label.className = "slice-nav-invert-label";
+    label.textContent = item.dataset.miniLabel || "";
+    label.style.left = `${itemRect.left - logoRect.left}px`;
+    label.style.top = `${itemRect.top - logoRect.top}px`;
+    label.style.width = `${itemRect.width}px`;
+    label.style.height = `${itemRect.height}px`;
+    sliceNavInvertLayer.append(label);
+  });
+
+  sliceNavInvertLayer.classList.toggle(
+    "is-visible",
+    sliceNavInvertLayer.childElementCount > 0
+  );
 }
 
 function updateNavReveal() {
@@ -151,6 +188,7 @@ function updateNavReveal() {
   mainNav.style.setProperty("--nav-reveal-right", `${navRect.right - revealRight}px`);
   mainNav.style.setProperty("--nav-reveal-bottom", `${navRect.bottom - revealBottom}px`);
   mainNav.style.setProperty("--nav-reveal-left", `${revealLeft - navRect.left}px`);
+  updateSliceNavInvertLayer();
 
   navItems.forEach((item) => {
     const itemRect = item.getBoundingClientRect();
@@ -161,11 +199,9 @@ function updateNavReveal() {
       logoRect.top < itemRect.bottom;
 
     if (overlaps && !sliceNavRevealHits.has(item)) {
-      applySliceNavColor(item);
       sliceNavRevealHits.add(item);
     } else if (!overlaps && sliceNavRevealHits.has(item)) {
       sliceNavRevealHits.delete(item);
-      item.classList.remove("nav-cmyk-c", "nav-cmyk-m", "nav-cmyk-y", "nav-cmyk-k");
     }
   });
 }
@@ -1398,7 +1434,20 @@ function rectanglesOverlap(first, second) {
 }
 
 function getLogoHitRect() {
-  const rect = logoAnchor.getBoundingClientRect();
+  // Use the visible solid logo bounds, not the larger draggable anchor.
+  const solidLogo = document.querySelector(".logo-solid");
+  const rect = (solidLogo || logoAnchor).getBoundingClientRect();
+
+  if (solidLogo) {
+    return {
+      left: rect.left,
+      top: rect.top,
+      right: rect.right,
+      bottom: rect.bottom,
+      width: rect.width,
+      height: rect.height,
+    };
+  }
 
   return {
     left: rect.left + rect.width * 0.194,

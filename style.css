@@ -319,19 +319,6 @@ body.logo-threat .main-nav a:not(.is-hit) span:nth-child(3) {
   transition: none;
 }
 
-.nav-item.is-hit::after {
-  content: "";
-  position: absolute;
-  left: 0.08em;
-  right: 0.08em;
-  bottom: -0.08em;
-  height: 0.045em;
-  background: currentColor;
-  transform: scaleX(0);
-  transform-origin: left center;
-  animation: underline-grow 360ms ease forwards;
-}
-
 @keyframes underline-grow {
   to {
     transform: scaleX(1);
@@ -454,11 +441,14 @@ body.logo-returning-home .logo-anchor {
   z-index: 8;
   color: #000000;
   font-family: Arial, "Microsoft YaHei", "PingFang SC", sans-serif;
-  font-size: calc(var(--nav-size) * 0.4);
+  font-size: var(--nav-size);
   font-weight: 400;
   line-height: 1;
   letter-spacing: 0;
-  text-decoration: none;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 0.055em;
+  text-underline-offset: 0.14em;
   white-space: nowrap;
   transform: translate(-50%, -50%) scale(0.2);
   transform-origin: center center;
@@ -467,15 +457,7 @@ body.logo-returning-home .logo-anchor {
 }
 
 .mini-nav-link::after {
-  content: "";
-  position: absolute;
-  left: 0.08em;
-  right: 0.08em;
-  bottom: -0.14em;
-  height: 0.055em;
-  background: currentColor;
-  transform: scaleX(1);
-  transform-origin: left center;
+  display: none;
 }
 
 .mini-nav-link.variant-0 {
@@ -483,15 +465,15 @@ body.logo-returning-home .logo-anchor {
 }
 
 .mini-nav-link.variant-1 {
-  color: #00ffff;
+  color: #000000;
 }
 
 .mini-nav-link.variant-2 {
-  color: #ff00ff;
+  color: #000000;
 }
 
 .mini-nav-link.variant-3 {
-  color: #ffff00;
+  color: #000000;
 }
 
 @keyframes mini-sprout {
@@ -558,8 +540,8 @@ body.window-closing .main-nav a::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #111111;
-  font-size: calc(var(--nav-size) * 0.4);
+  color: #000000;
+  font-size: var(--nav-size);
   line-height: 1;
   text-decoration: underline;
   text-decoration-thickness: 0.055em;
@@ -568,28 +550,44 @@ body.window-closing .main-nav a::after {
   pointer-events: none;
 }
 
-body.window-opening .main-nav a.nav-cmyk-c::after,
-body.window-opened .main-nav a.nav-cmyk-c::after,
-body.window-closing .main-nav a.nav-cmyk-c::after {
-  color: #00ffff;
+/* The window shows black type; this layer restores white only over solid logo pixels. */
+.slice-nav-invert-layer {
+  position: fixed;
+  z-index: 11;
+  display: none;
+  overflow: hidden;
+  background: transparent;
+  pointer-events: none;
+  -webkit-mask-image: url("logo/blacklogo.svg");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-mode: alpha;
+  -webkit-mask-type: alpha;
+  mask-image: url("logo/blacklogo.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 100% 100%;
+  mask-mode: alpha;
+  mask-type: alpha;
 }
 
-body.window-opening .main-nav a.nav-cmyk-m::after,
-body.window-opened .main-nav a.nav-cmyk-m::after,
-body.window-closing .main-nav a.nav-cmyk-m::after {
-  color: #ff00ff;
+.slice-nav-invert-layer.is-visible {
+  display: block;
 }
 
-body.window-opening .main-nav a.nav-cmyk-y::after,
-body.window-opened .main-nav a.nav-cmyk-y::after,
-body.window-closing .main-nav a.nav-cmyk-y::after {
-  color: #ffff00;
-}
-
-body.window-opening .main-nav a.nav-cmyk-k::after,
-body.window-opened .main-nav a.nav-cmyk-k::after,
-body.window-closing .main-nav a.nav-cmyk-k::after {
-  color: #000000;
+.slice-nav-invert-label {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: var(--nav-size);
+  line-height: 1;
+  text-decoration: underline;
+  text-decoration-thickness: 0.055em;
+  text-underline-offset: 0.14em;
+  white-space: nowrap;
 }
 
 body.window-opening.logo-threat .main-nav a span,
