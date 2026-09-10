@@ -1,0 +1,103 @@
+.runner-ui {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+}
+.runner-ui[hidden] { display: none; }
+.runner-score {
+  position: absolute;
+  right: var(--gutter);
+  top: calc(var(--ground-top) + 24px);
+  width: 267px;
+  height: 21px;
+  image-rendering: pixelated;
+}
+@media (max-width: 640px) {
+  .runner-score { width: 178px; height: 14px; }
+}
+.runner-obstacle {
+  position: fixed;
+  left: 0;
+  top: 0;
+  image-rendering: pixelated;
+}
+body.runner-active .logo-anchor {
+  transition: none;
+  pointer-events: none;
+}
+body.runner-active .main-nav { pointer-events: none; }
+body.runner-active .logo-outline { opacity: 1; }
+body.runner-active .logo-solid { opacity: 0; }
+body.runner-crashed .logo-outline { opacity: 0.4; }
+body.runner-active.runner-jumping .logo-outline { opacity: 0; }
+body.runner-active.runner-jumping .logo-solid { opacity: 1; }
+body.runner-active.runner-jumping.runner-crashed .logo-solid { opacity: 0.4; }
+
+.runner-logo-pixels {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+body.runner-active .runner-outline-ready .logo-outline { visibility: hidden; }
+body.runner-active .runner-outline-ready .runner-logo-outline { display: block; }
+body.runner-active.runner-jumping .runner-logo-outline { display: none; }
+body.runner-active.runner-jumping .runner-solid-ready .logo-solid { visibility: hidden; }
+body.runner-active.runner-jumping .runner-solid-ready .runner-logo-solid { display: block; }
+body.runner-crashed .runner-logo-pixels { opacity: 0.4; }
+.runner-angel { display: none; }
+body.runner-ascending .runner-angel {
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+body.runner-ascending .runner-logo-pixels,
+body.runner-ascending .logo-outline { opacity: 1; }
+.runner-angel-wing {
+  position: absolute;
+  top: 38%;
+  width: 34%;
+  transform-origin: 95% 80%;
+  animation: runner-wing-flap 280ms steps(2, end) infinite alternate;
+}
+.runner-angel-wing svg { display: block; width: 100%; }
+.runner-angel-left { left: -11%; }
+.runner-angel-right {
+  right: -11%;
+  transform-origin: 5% 80%;
+  animation-name: runner-wing-flap-right;
+}
+.runner-angel-right svg { transform: scaleX(-1); }
+.runner-angel-halo {
+  position: absolute;
+  top: 3%;
+  left: 34%;
+  width: 32%;
+}
+@keyframes runner-wing-flap {
+  from { transform: rotate(-16deg); }
+  to { transform: rotate(18deg); }
+}
+@keyframes runner-wing-flap-right {
+  from { transform: rotate(16deg); }
+  to { transform: rotate(-18deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .runner-angel-wing { animation: none; }
+}
+body.runner-active .ground-line { height: 3px; }
+body.runner-active .ground-line::after {
+  content: "";
+  position: absolute;
+  top: 7px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: repeating-linear-gradient(90deg, #000 0 6px, transparent 6px 24px);
+  opacity: 0.22;
+}

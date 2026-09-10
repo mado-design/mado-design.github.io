@@ -27,6 +27,7 @@ navItems.forEach((item) => {
 });
 let introFinished = false;
 let logoSettled = false;
+let runnerActive = false;
 let navEscaping = false;
 let logoHovering = false;
 let logoDragging = false;
@@ -57,6 +58,7 @@ const fallenNavs = [];
 const miniNavs = new Map();
 const miniNavVariants = new Map();
 const bumpedMiniNavs = new Set();
+const navBumpAnimations = new Map();
 const heldKeys = new Set();
 const navCollisionInsetX = 0.08;
 const navCollisionInsetY = 0.14;
@@ -806,6 +808,7 @@ function activateGround() {
 }
 
 function hideGroundIfIdle() {
+  if (runnerActive) return;
   if (heldKeys.size === 0 && jumpVelocity === 0 && jumpOffset === 0) {
     groundVisible = false;
     document.body.classList.remove("ground-active");
@@ -813,7 +816,7 @@ function hideGroundIfIdle() {
 }
 
 function openWindowWorld() {
-  if (!logoSettled || windowOpened || windowClosing || logoDragging) {
+  if (runnerActive || !logoSettled || windowOpened || windowClosing || logoDragging) {
     return;
   }
 
@@ -1031,6 +1034,10 @@ logoIntro.play().catch(() => {
 });
 
 logoAnchor.addEventListener("click", (event) => {
+  if (runnerActive) {
+    event.preventDefault();
+    return;
+  }
   if (!document.body.classList.contains("intro-finished") || suppressLogoClick) {
     event.preventDefault();
     suppressLogoClick = false;
@@ -1062,6 +1069,8 @@ document.addEventListener("click", () => {
 });
 
 function resetNavItems() {
+  navBumpAnimations.forEach((animations) => animations.forEach((animation) => animation.cancel()));
+  navBumpAnimations.clear();
   mainNav.classList.remove("is-escaping");
   navEscaping = false;
 
@@ -1097,8 +1106,37 @@ function resetNavItems() {
   });
 }
 
-function createMiniNav(item, source = "bump") {
+function positionMiniNav(item, link, source = "bump") {
   const rect = item.getBoundingClientRect();
+  const margin = 12;
+  const halfWidth = link.offsetWidth / 2;
+  const halfHeight = link.offsetHeight / 2;
+  const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
+  const minY = margin + halfHeight;
+  const maxY = getUsableViewportHeight() - margin - halfHeight;
+  const above = rect.top - 10 - halfHeight;
+  const targetY = source === "hit" ? rect.top + rect.height / 2
+    : above >= minY ? above : rect.bottom + 10 + halfHeight;
+  const y = clamp(targetY, minY, maxY);
+  const startY = clamp(rect.top + rect.height / 2, minY, maxY);
+  link.style.left = `${clamp(rect.left + rect.width / 2, margin + halfWidth, window.innerWidth - margin - halfWidth)}px`;
+  link.style.top = `${y}px`;
+  link.style.setProperty("--mini-start-y", `${startY - y}px`);
+}
+
+function bumpNavItem(item) {
+  navBumpAnimations.get(item)?.forEach((animation) => animation.cancel());
+  const lift = Math.min(14, Math.max(0, item.getBoundingClientRect().top - 8));
+  const animations = Array.from(item.querySelectorAll("span"), (span) => span.animate([
+    { translate: "0 0", scale: "1 1", offset: 0 },
+    { translate: `0 -${lift}px`, scale: "1.04 0.94", offset: 0.25 },
+    { translate: "0 2px", scale: "0.98 1.02", offset: 0.65 },
+    { translate: "0 0", scale: "1 1", offset: 1 },
+  ], { duration: 300, easing: "cubic-bezier(0.2, 0.7, 0.3, 1)" }));
+  navBumpAnimations.set(item, animations);
+}
+
+function createMiniNav(item, source = "bump") {
   let link = miniNavs.get(item);
   const currentVariant = miniNavVariants.get(item);
   const variant = currentVariant === undefined ? Math.floor(Math.random() * 4) : currentVariant % 4;
@@ -1114,11 +1152,8 @@ function createMiniNav(item, source = "bump") {
   link.textContent = item.dataset.miniLabel || item.textContent.trim();
   link.classList.remove("variant-0", "variant-1", "variant-2", "variant-3");
   link.classList.add(`variant-${variant}`);
-  link.style.left = `${rect.left + rect.width / 2}px`;
-  link.style.top =
-    source === "hit"
-      ? `${rect.top + rect.height / 2}px`
-      : `${Math.max(18, rect.top - (rect.height * 0.42))}px`;
+  link.dataset.source = source;
+  positionMiniNav(item, link, source);
   link.style.animation = "none";
   link.offsetHeight;
   link.style.animation = "";
@@ -1142,7 +1177,11 @@ function checkMiniNavBlocks() {
     const hitFromBelow = previousLogoHitTop >= rect.bottom - 16 && logoRect.top <= rect.bottom + 10;
 
     if (overlapsHorizontally && hitFromBelow && !bumpedMiniNavs.has(item)) {
-      jumpVelocity = Math.max(jumpVelocity, 6);
+      // Resolve penetration before rebounding, like hitting a block from below.
+      jumpOffset += Math.max(0, rect.bottom - logoRect.top);
+      jumpVelocity = 3;
+      applyLogoKeyboardPosition();
+      bumpNavItem(item);
       createMiniNav(item, "bump");
       bumpedMiniNavs.add(item);
     } else if (!hitFromBelow) {
@@ -1162,6 +1201,10 @@ function applyLogoKeyboardPosition() {
 }
 
 function runKeyboardLoop() {
+  if (runnerActive) {
+    keyboardLoopRunning = false;
+    return;
+  }
   if (!logoSettled) {
     keyboardLoopRunning = false;
     return;
@@ -1236,6 +1279,7 @@ function startKeyboardLoop() {
 }
 
 function escapeNavItems(event) {
+  if (runnerActive) return;
   if (
     event.pointerType === "touch" ||
     window.matchMedia("(max-width: 640px)").matches ||
@@ -1988,4 +2032,12 @@ window.addEventListener("keyup", (event) => {
 });
 
 window.addEventListener("resize", updateNavReveal);
+function repositionMiniNavs() {
+  miniNavs.forEach((link, item) => {
+    link.style.animation = "none";
+    positionMiniNav(item, link, link.dataset.source);
+  });
+}
+window.addEventListener("resize", repositionMiniNavs);
+window.visualViewport?.addEventListener("resize", repositionMiniNavs);
 window.visualViewport?.addEventListener("resize", clampEscapedMobileNavItems);

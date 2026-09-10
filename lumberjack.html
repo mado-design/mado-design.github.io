@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>废稿伐木工 · Draft cutter</title>
+<meta name="description" content="拿起钢笔工具，把废稿变成下一次灵感。一个关于设计日常的小游戏。">
+<link rel="stylesheet" href="lumberjack.css">
+</head>
+<body>
+<header><a href="index.html" class="back">↖ 返回作品集</a><span>闲暇练习 / NO. 01</span><button id="pause" disabled>暂停</button></header>
+<main>
+<div class="heading"><div><p class="eyebrow">LESS DRAFTS, MORE IDEAS.</p><h1>废稿伐木工<span>Draft cutter</span></h1></div><p class="intro">今天的废稿，明天的灵感。<br>拿起钢笔工具，清空你的工作台。</p></div>
+<section class="game" aria-label="废稿伐木工游戏">
+<div class="hud"><div><span>已清理</span><strong id="score">000</strong></div><div class="time"><span>剩余时间</span><strong id="time">45<span>s</span></strong></div><div><span>本机最佳</span><strong id="best">000</strong></div></div>
+<canvas id="scene" aria-label="正常比例的设计师站在废稿堆旁，使用左右按钮切割，避开伸出的修改意见。"></canvas>
+<div class="overlay" id="overlay"><div class="card"><span class="tag" id="tag">设计师的课间休息</span><h2 id="title">让废稿，下班。</h2><p id="message">左右切换，落笔清理。<br>避开伸出的修改意见，挑战 45 秒。</p><button id="start">拿起钢笔 <span>↗</span></button></div></div>
+<div class="scene-label"><span>✳ 钢笔工具 / PEN TOOL</span><span>废稿回收区</span></div>
+</section>
+<div class="controls"><button id="left" aria-label="从左侧切割">← <span>左侧落笔</span><kbd>A</kbd></button><p>避开修改意见<br><span>← → 或 A / D · 空格暂停</span></p><button id="right" aria-label="从右侧切割"><kbd>D</kbd><span>右侧落笔</span> →</button></div>
+<p class="footnote">没有白做的设计，只有还没用上的灵感。</p>
+<p id="status" class="sr-only" role="status" aria-live="polite"></p>
+</main>
+<script src="lumberjack.js"></script>
+</body></html>

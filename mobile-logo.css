@@ -1,3 +1,5 @@
+@import url("logo-weight.css");
+
 /* Keep the logo outline light on small screens across secondary pages. */
 @media (max-width: 700px) {
   :root {

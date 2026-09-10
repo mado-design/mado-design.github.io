@@ -1,0 +1,17 @@
+/* Match the 2.8px stroke in the 1080px intro, independently of logo size. */
+@media (min-width: 641px) {
+  :root {
+    --desktop-logo-stroke: calc(100vmin * 0.002592592593);
+  }
+
+  .logo-outline .logo-stroke,
+  .project-logo-outline [stroke-width] {
+    stroke-width: var(--desktop-logo-stroke);
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* Both outlines already include this vertical segment in their polyline. */
+  .project-logo-outline line {
+    display: none;
+  }
+}
