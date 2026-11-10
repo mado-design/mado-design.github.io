@@ -60,6 +60,14 @@ const sliceFiles = [
   "slices/Snipaste_2026-08-08_19-09-50.jpg",
   "slices/Snipaste_2026-08-08_19-09-19.jpg",
   "slices/mado-gara2.png",
+  "slices/monofont.png",
+  "slices/qiansuishi2.png",
+  "slices/qiansuishi.png",
+  "slices/waixingren.png",
+  "slices/shujuhaibao.jpg",
+  "slices/包装动画-1793857002295.mp4",
+  "slices/包装动画-1793857130043.mp4",
+  "slices/包装动画-1793870925113.mp4",
 ];
 
 function seededRandom(seed) {
@@ -76,8 +84,7 @@ function buildSliceBoard() {
   }
 
   const random = seededRandom(260808);
-  const maxSlices = 20;
-  const selected = sliceFiles.slice(-maxSlices);
+  const selected = sliceFiles;
   const placed = [];
   const boardHeight = sliceBoard.clientHeight || getUsableViewportHeight();
 
