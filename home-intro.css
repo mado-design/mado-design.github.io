@@ -1,0 +1,42 @@
+/* Keep the original intro, then reveal the unchanged catalog. */
+body.home-catalog:not(.logo-settled) { overflow-y: hidden; }
+.home-catalog .catalog-shell,
+.home-catalog .catalog-footer {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 240ms ease;
+}
+.home-catalog.logo-settled .catalog-shell,
+.home-catalog.logo-settled .catalog-footer {
+  opacity: 1;
+  visibility: visible;
+}
+.home-catalog:not(.logo-settled) .logo-anchor { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .home-catalog .logo-anchor,
+  .home-catalog .catalog-shell,
+  .home-catalog .catalog-footer { transition: none; }
+}
+
+/* Keep the slice wall above catalog previews and below its return logo. */
+.home-catalog .window-world { z-index: 30; }
+.home-catalog.slices-active { overflow-y: hidden; }
+.home-catalog.slices-active .logo-anchor { z-index: 40; }
+.home-catalog .window-transition { z-index: 50; }
+.home-catalog.window-closing .logo-anchor { pointer-events: none; }
+@media (prefers-reduced-motion: reduce) {
+  .home-catalog.window-logo-return .logo-anchor { animation: none; }
+}
+
+/* Return from the slice wall using the same movement as the intro. */
+body.home-catalog.home-logo-return .logo-anchor {
+  z-index: 40;
+  pointer-events: none;
+  transition:
+    left var(--move-duration) var(--move-ease),
+    top var(--move-duration) var(--move-ease),
+    transform var(--move-duration) var(--move-ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  body.home-catalog.home-logo-return .logo-anchor { transition: none; }
+}

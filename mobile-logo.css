@@ -1,5 +1,10 @@
 @import url("logo-weight.css");
 
+/* This navigation belongs to mobile; the mobile rules below enable it. */
+.project-hidden-nav {
+  display: none;
+}
+
 /* Keep the logo outline light on small screens across secondary pages. */
 @media (max-width: 700px) {
   :root {

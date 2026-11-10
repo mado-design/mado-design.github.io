@@ -272,7 +272,7 @@
           if (moved) { moved = false; return; }
           const rect = logoShell.getBoundingClientRect();
           const isRightHalf = event.clientX >= rect.left + rect.width / 2;
-          const target = isRightHalf ? current + 1 : current - 1;
+          const target = isRightHalf ? current - 1 : current + 1;
           if (target < 1 || target > 13) return;
           window.location.href = 'project-' + String(target).padStart(2, '0') + '.html';
         });
